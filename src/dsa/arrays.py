@@ -3,6 +3,7 @@ This module provides example implementations for static and dynamic arrays. Sinc
 already contains a dynamic array primitive (i.e., `list`), the below code should
 only be used for learning purposes.
 """
+
 from typing import Any
 
 
@@ -115,7 +116,7 @@ class DynamicArray:
         array = StaticArray(new_length)
         array.set(0, value)
         for i in range(self.array.size()):
-            array.set(i+1, self.array.get(i))
+            array.set(i + 1, self.array.get(i))
         self.array = array
 
     def append(self, value: Any) -> None:
@@ -143,6 +144,5 @@ class DynamicArray:
             elif i == index:
                 pass
             elif i > index:
-                array.set(i-1, self.array.get(i))
+                array.set(i - 1, self.array.get(i))
         self.array = array
-
