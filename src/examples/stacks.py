@@ -31,7 +31,7 @@ def valid_brackets(input: str) -> bool:
                 return False
         else:
             continue
-    return (stack.size() == 0)
+    return stack.size() == 0
 
 
 if __name__ == "__main__":
