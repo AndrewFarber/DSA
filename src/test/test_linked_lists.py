@@ -120,6 +120,17 @@ def test_sll_remove_middle():
     assert lst.length == 2
 
 
+def test_sll_find():
+    lst = SinglyLinkedList()
+    lst.insert(0, "First")
+    lst.insert(1, "Second")
+    lst.insert(2, "Third")
+    assert lst.length == 3
+    assert lst.find("First") == lst.head
+    assert lst.find("Third") == lst.tail
+    assert lst.find("Fourth") is None
+
+
 def test_dll_insert_empty():
     lst = DoublyLinkedList()
     assert lst.length == 0

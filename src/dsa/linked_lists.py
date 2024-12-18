@@ -39,6 +39,25 @@ class SinglyLinkedList:
             assert node is not None  # Inconsistent state
             return node
 
+    def find(self, value: Any) -> SLNode | None:
+        """
+        Return the first node containing the data that matches
+        the specified value.
+        """
+        if self.length == 0:
+            raise IndexError("List is empty")
+        if self.head is None or self.tail is None:
+            raise Exception("Linked list is in inconsistent state")
+
+        node = self.head
+        while True:
+            if node.data == value:
+                return node
+            elif node.next is None:
+                return None
+            else:
+                node = node.next
+
     def insert(self, index: int, data: Any) -> None:
         """
         Insert a node with the provided data at the specified index.
