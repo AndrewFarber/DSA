@@ -58,9 +58,11 @@ class SinglyLinkedList:
             else:
                 node = node.next
 
-    def insert(self, index: int, data: Any) -> None:
+    def insert(self, index: int, data: Any) -> SLNode:
         """
         Insert a node with the provided data at the specified index.
+        Returns the new node.
+
         If the provided index matches the length of the array, a new node
         will be appended to the end.
         """
@@ -70,14 +72,14 @@ class SinglyLinkedList:
             self.head = n
             self.tail = n
             self.length += 1
-            return
+            return n
 
         # Insert at head
         if index == 0:
             h = self.head
             self.head = SLNode(data, next=h)
             self.length += 1
-            return
+            return self.head
 
         # Insert at tail (i.e., Append)
         if index == self.length:
@@ -86,7 +88,7 @@ class SinglyLinkedList:
             self.tail.next = n
             self.tail = n
             self.length += 1
-            return
+            return self.tail
 
         # Insert in middle
         if 0 < index < self.length:
@@ -95,12 +97,15 @@ class SinglyLinkedList:
             new = SLNode(data, next=after)
             before.next = new
             self.length += 1
-            return
+            return new
 
         raise IndexError("Index out of bounds")
 
-    def remove(self, index: int) -> None:
-        """Remove the node at the specified index."""
+    def remove(self, index: int) -> SLNode:
+        """
+        Remove the node at the specified index.
+        Returns the removed node.
+        """
         if self.length == 0:
             raise IndexError("List is empty")
         if self.head is None or self.tail is None:
@@ -108,33 +113,37 @@ class SinglyLinkedList:
 
         # Remove only node
         if index == 0 and self.length == 1:
+            removed = self.head
             self.head = None
             self.tail = None
             self.length -= 1
-            return
+            return removed
 
         # Remove at head
         if index == 0:
+            removed = self.head
             self.head = self.head.next
             self.length -= 1
-            return
+            return removed
 
         # Remove at tail
         if index == (self.length - 1):
+            removed = self.tail
             before = self.search(self.length - 2)
             assert before is not None  # Inconsistent state
             before.next = None
             self.tail = before
             self.length -= 1
-            return
+            return removed
 
         # Remove in middle
         if 0 < index < self.length - 1:
             before = self.search(index - 1)
             assert before is not None and before.next is not None  # Inconsistent state
+            removed = before.next
             before.next = before.next.next
             self.length -= 1
-            return
+            return removed
 
         raise IndexError("Index out of bounds")
 

@@ -8,16 +8,12 @@ def test_sll_insert_empty():
     assert lst.length == 0
     with pytest.raises(IndexError):
         lst.insert(1, "First")
-    lst.insert(0, "First")
-    assert lst.head.data == "First"
-    assert lst.tail.data == "First"
-    assert lst.length == 1
 
 
 def test_sll_insert_start():
     lst = SinglyLinkedList()
-    lst.insert(0, "First")
-    lst.insert(0, "Second")
+    assert lst.insert(0, "First").data == "First"
+    assert lst.insert(0, "Second").data == "Second"
     assert lst.head.data == "Second"
     assert lst.tail.data == "First"
     assert lst.head.next == lst.tail
@@ -26,9 +22,9 @@ def test_sll_insert_start():
 
 def test_sll_insert_end():
     lst = SinglyLinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    lst.insert(2, "Third")
+    assert lst.insert(0, "First").data == "First"
+    assert lst.insert(1, "Second").data == "Second"
+    assert lst.insert(2, "Third").data == "Third"
     assert lst.head.data == "First"
     assert lst.head.next.data == "Second"
     assert lst.tail.data == "Third"
@@ -37,9 +33,9 @@ def test_sll_insert_end():
 
 def test_sll_insert_middle():
     lst = SinglyLinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    lst.insert(1, "Third")
+    assert lst.insert(0, "First").data == "First"
+    assert lst.insert(1, "Second").data == "Second"
+    assert lst.insert(1, "Third").data == "Third"
     assert lst.head.data == "First"
     assert lst.head.next.data == "Third"
     assert lst.tail.data == "Second"
@@ -54,25 +50,25 @@ def test_sll_search_empty():
 
 def test_sll_search_start():
     lst = SinglyLinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    lst.insert(2, "Third")
+    assert lst.insert(0, "First").data == "First"
+    assert lst.insert(1, "Second").data == "Second"
+    assert lst.insert(2, "Third").data == "Third"
     assert lst.search(0).data == "First"
 
 
 def test_sll_search_end():
     lst = SinglyLinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    lst.insert(2, "Third")
+    assert lst.insert(0, "First").data == "First"
+    assert lst.insert(1, "Second").data == "Second"
+    assert lst.insert(2, "Third").data == "Third"
     assert lst.search(2).data == "Third"
 
 
 def test_sll_search_middle():
     lst = SinglyLinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    lst.insert(2, "Third")
+    assert lst.insert(0, "First").data == "First"
+    assert lst.insert(1, "Second").data == "Second"
+    assert lst.insert(2, "Third").data == "Third"
     assert lst.search(1).data == "Second"
 
 
@@ -89,7 +85,7 @@ def test_sll_remove_start():
     lst.insert(1, "Second")
     lst.insert(2, "Third")
     assert lst.length == 3
-    lst.remove(0)
+    assert lst.remove(0).data == "First"
     assert lst.head.data == "Second"
     assert lst.tail.data == "Third"
     assert lst.length == 2
@@ -101,7 +97,7 @@ def test_sll_remove_end():
     lst.insert(1, "Second")
     lst.insert(2, "Third")
     assert lst.length == 3
-    lst.remove(2)
+    assert lst.remove(2).data == "Third"
     assert lst.head.data == "First"
     assert lst.tail.data == "Second"
     assert lst.length == 2
@@ -113,7 +109,7 @@ def test_sll_remove_middle():
     lst.insert(1, "Second")
     lst.insert(2, "Third")
     assert lst.length == 3
-    lst.remove(1)
+    assert lst.remove(1).data == "Second"
     assert lst.head.data == "First"
     assert lst.tail.data == "Third"
     assert lst.head.next == lst.tail
