@@ -20,15 +20,16 @@ class SinglyLinkedList:
 
     def search(self, index: int) -> SLNode:
         """Get the node at the specified index."""
-        # Index error if empty or outside of bounds
+        if self.length == 0:
+            raise IndexError("List is empty")
         if not (0 <= index < self.length):
-            raise IndexError
+            raise IndexError("Index out of bounds")
+        if self.head is None or self.tail is None:
+            raise Exception("Linked list is in inconsistent state")
 
         if index == 0:
-            assert self.head is not None  # Inconsistent state
             return self.head
         elif index == self.length - 1:
-            assert self.tail is not None  # Inconsistent state
             return self.tail
         else:
             node = self.head
@@ -59,10 +60,10 @@ class SinglyLinkedList:
             self.length += 1
             return
 
-        # Insert at tail
+        # Insert at tail (i.e., Append)
         if index == self.length:
+            n = SLNode(data)
             assert self.tail is not None  # Inconsistent state
-            n = SLNode(data, next=None)
             self.tail.next = n
             self.tail = n
             self.length += 1
@@ -71,17 +72,20 @@ class SinglyLinkedList:
         # Insert in middle
         if 0 < index < self.length:
             before = self.search(index - 1)
-            new = SLNode(data, next=before.next)
+            after = before.next
+            new = SLNode(data, next=after)
             before.next = new
             self.length += 1
             return
 
-        raise IndexError
+        raise IndexError("Index out of bounds")
 
     def remove(self, index: int) -> None:
         """Remove the node at the specified index."""
         if self.length == 0:
-            raise IndexError
+            raise IndexError("List is empty")
+        if self.head is None or self.tail is None:
+            raise Exception("Linked list is in inconsistent state")
 
         # Remove only node
         if index == 0 and self.length == 1:
@@ -92,7 +96,6 @@ class SinglyLinkedList:
 
         # Remove at head
         if index == 0:
-            assert self.head is not None
             self.head = self.head.next
             self.length -= 1
             return
@@ -107,14 +110,14 @@ class SinglyLinkedList:
             return
 
         # Remove in middle
-        if 0 < index < self.length:
+        if 0 < index < self.length - 1:
             before = self.search(index - 1)
             assert before is not None and before.next is not None  # Inconsistent state
             before.next = before.next.next
             self.length -= 1
             return
 
-        raise IndexError
+        raise IndexError("Index out of bounds")
 
 
 class DLNode:
@@ -134,15 +137,16 @@ class DoublyLinkedList:
 
     def search(self, index: int) -> DLNode:
         """Get the node at the specified index."""
-        # Index error if empty or outside of bounds
+        if self.length == 0:
+            raise IndexError("List is empty")
         if not (0 <= index < self.length):
-            raise IndexError
+            raise IndexError("Index out of bounds")
+        if self.head is None or self.tail is None:
+            raise Exception("Linked list is in inconsistent state")
 
         if index == 0:
-            assert self.head is not None  # Inconsistent state
             return self.head
         elif index == self.length - 1:
-            assert self.tail is not None  # Inconsistent state
             return self.tail
         else:
             node = self.head
@@ -170,12 +174,12 @@ class DoublyLinkedList:
         if index == 0:
             h = self.head
             assert h is not None  # Inconsistent state
-            self.head = DLNode(data, prev=None, next=h)
+            self.head = DLNode(data, next=h)
             h.prev = self.head
             self.length += 1
             return
 
-        # Insert at tail
+        # Insert at tail (i.e., Append)
         if index == self.length:
             assert self.tail is not None  # Inconsistent state
             n = DLNode(data, prev=self.tail, next=None)
@@ -187,20 +191,20 @@ class DoublyLinkedList:
         # Insert in middle
         if 0 < index < self.length:
             before = self.search(index - 1)
-            assert before.next is not None  # Inconsistent state
-            new = DLNode(data, prev=before, next=before.next)
+            after = before.next
+            assert before is not None and after is not None  # Inconsistent state
+            new = DLNode(data, prev=before, next=after)
             before.next = new
-            assert before.next.next is not None  # Inconsistent state
-            before.next.next.prev = new
+            after.prev = new
             self.length += 1
             return
 
-        raise IndexError
+        raise IndexError("Index out of range")
 
     def remove(self, index: int) -> None:
         """Remove the node at the specified index."""
         if self.length == 0:
-            raise IndexError
+            raise IndexError("List is empty")
 
         # Remove only node
         if index == 0 and self.length == 1:
@@ -228,14 +232,16 @@ class DoublyLinkedList:
             return
 
         # Remove in middle
-        if 0 < index < self.length:
+        if 0 < index < self.length - 1:
             before = self.search(index - 1)
             assert before is not None  # Inconsistent state
-            assert before.next is not None  # Inconsistent state
-            before.next = before.next.next
-            assert before.next is not None  # Inconsistent state
-            before.next.prev = before
+            current = before.next
+            assert current is not None  # Inconsistent state
+            after = current.next
+            assert after is not None  # Inconsistent state
+            before.next = after
+            after.prev = before
             self.length -= 1
             return
 
-        raise IndexError
+        raise IndexError("Index out of range")
