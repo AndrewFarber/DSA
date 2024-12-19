@@ -1,6 +1,6 @@
 import pytest
 
-from dsa.stacks import Stack
+from dsa.stack import Stack
 
 
 def test_stack_push():
