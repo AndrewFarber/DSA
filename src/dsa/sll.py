@@ -1,5 +1,5 @@
 """
-This module provides implementations for a singly linked lists.
+This module provides an implementation for a singly linked lists.
 """
 
 from __future__ import annotations
