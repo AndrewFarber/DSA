@@ -133,4 +133,3 @@ def test_dll_remove_middle():
     assert lst.tail.data == "Third"
     assert lst.tail.prev.data == "First"
     assert lst.length == 2
-
