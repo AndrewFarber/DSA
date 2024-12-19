@@ -1,133 +1,239 @@
 """
-This module provides implementations for a doubly linked lists.
+This module provides an implementation for a doubly linked lists.
 """
 
 from __future__ import annotations
-from typing import Any
+from typing import Any, Generator
 
 
-class DLNode:
+class InconsistentState(Exception):
+    pass
+
+
+class EmptyList(Exception):
+    pass
+
+
+class OutOfBounds(Exception):
+    pass
+
+
+class Node:
     def __init__(
-        self, data: Any, prev: DLNode | None = None, next: DLNode | None = None
-    ):
-        self.data = data
-        self.prev = prev
-        self.next = next
+        self,
+        data: Any,
+        prev: Node | None = None,
+        next: Node | None = None,
+    ) -> None:
+        """
+        Instantiate a node with data. Optionally point to a previous or next node.
+        """
+        self.data: Any = data
+        self.prev: Node | None = prev
+        self.next: Node | None = next
+
+    def __repr__(self) -> str:
+        return f"<Node(data={self.data})>"
 
 
-class DoublyLinkedList:
+class LinkedList:
+    """
+    A linked list is a sequential list of nodes that hold data and
+    point to other nodes.
+    """
+
     def __init__(self):
-        self.length = 0
-        self.head: DLNode | None = None
-        self.tail: DLNode | None = None
+        """
+        Instantiate a linked list containing no nodes.
+        """
+        self._length = 0
+        self._head: Node | None = None
+        self._tail: Node | None = None
 
-    def search(self, index: int) -> DLNode:
-        """Get the node at the specified index."""
-        if self.length == 0:
-            raise IndexError("List is empty")
-        if not (0 <= index < self.length):
-            raise IndexError("Index out of bounds")
-        if self.head is None or self.tail is None:
-            raise Exception("Linked list is in inconsistent state")
+    @property
+    def length(self) -> int:
+        """
+        The number of nodes in the linked list.
+        """
+        return self._length
 
-        if index == 0:
-            return self.head
-        elif index == self.length - 1:
-            return self.tail
-        else:
-            node = self.head
-            for _ in range(index):
+    @property
+    def head(self) -> Node | None:
+        """
+        The first node in the linked list.
+        """
+        return self._head
+
+    @property
+    def tail(self) -> Node | None:
+        """
+        The last node in the linked list.
+        """
+        return self._tail
+
+    def traverse(self, position: int) -> Node:
+        """
+        Get the node at the specified position.
+
+        For a linked list containing n nodes, the first
+        node in the linked list is at position zero
+        and the last node in the linked list is at
+        position n-1.
+        """
+        if self._length == 0:
+            raise EmptyList
+        if not (0 <= position < self._length):
+            raise OutOfBounds
+        if self._head is None or self._tail is None:
+            raise InconsistentState
+
+        if position == 0:
+            return self._head
+        elif position == self._length - 1:
+            return self._tail
+        elif position <= self._length // 2:
+            node = self._head
+            for _ in range(position):
                 assert node is not None  # Inconsistent state
                 node = node.next
-            assert node is not None  # Inconsistent state
-            return node
+        else:
+            node = self._tail
+            for _ in range(self._length - 1, position, -1):
+                assert node is not None  # Inconsistent state
+                node = node.next
 
-    def insert(self, index: int, data: Any) -> None:
+        assert node is not None  # Inconsistent state
+        return node
+
+    def find(self, value: Any) -> Node | None:
         """
-        Insert a node with the provided data at the specified index.
-        If the provided index matches the length of the array, a new node
+        Return the first node containing the data that matches
+        the specified value. If the value is not found, returns None.
+        """
+        current = self._head
+        while current:
+            if current.data == value:
+                return current
+            else:
+                current = current.next
+        return None
+
+    def contains(self, value: Any) -> bool:
+        """
+        Scans the linked list for the specified value.
+        If the linked list contains the value, returns True.
+        Otherwise, the function will return False.
+        """
+        return self.find(value) is not None
+
+    def insert(self, position: int, data: Any) -> Node:
+        """
+        Insert a node with the provided data at the specified position.
+        Returns the new node.
+
+        If the provided index matches the length of the list, a new node
         will be appended to the end.
         """
         # Insert first node
-        if index == 0 and self.length == 0:
-            n = DLNode(data)
-            self.head = n
-            self.tail = n
-            self.length += 1
-            return
+        if position == 0 and self._length == 0:
+            n = Node(data)
+            self._head = n
+            self._tail = n
+            self._length += 1
+            return n
 
         # Insert at head
-        if index == 0:
-            h = self.head
-            assert h is not None  # Inconsistent state
-            self.head = DLNode(data, next=h)
-            h.prev = self.head
-            self.length += 1
-            return
+        if position == 0:
+            after = self._head
+            assert after is not None  # Inconsistent state
+            new = Node(data, next=after)
+            after.prev = new
+            self._head = new
+            self._length += 1
+            return self._head
 
         # Insert at tail (i.e., Append)
-        if index == self.length:
-            assert self.tail is not None  # Inconsistent state
-            n = DLNode(data, prev=self.tail, next=None)
-            self.tail.next = n
-            self.tail = n
-            self.length += 1
-            return
+        if position == self._length:
+            before = self._tail
+            assert before is not None  # Inconsistent state
+            new = Node(data, prev=before)
+            before.next = new
+            self._tail = new
+            self._length += 1
+            return self._tail
 
         # Insert in middle
-        if 0 < index < self.length:
-            before = self.search(index - 1)
+        if 0 < position < self._length:
+            before = self.traverse(position - 1)
             after = before.next
-            assert before is not None and after is not None  # Inconsistent state
-            new = DLNode(data, prev=before, next=after)
+            assert after is not None  # Inconsistent state
+            new = Node(data, prev=before, next=after)
             before.next = new
             after.prev = new
-            self.length += 1
-            return
+            self._length += 1
+            return new
 
-        raise IndexError("Index out of range")
+        raise OutOfBounds
 
-    def remove(self, index: int) -> None:
-        """Remove the node at the specified index."""
-        if self.length == 0:
-            raise IndexError("List is empty")
+    def remove(self, position: int) -> Any:
+        """
+        Remove the node at the specified position.
+        Returns the data contained in the removed node.
+        """
+        if self._length == 0:
+            raise EmptyList
+        if self._head is None or self._tail is None:
+            raise InconsistentState
 
         # Remove only node
-        if index == 0 and self.length == 1:
-            self.head = None
-            self.tail = None
-            self.length -= 1
-            return
+        if position == 0 and self._length == 1:
+            removed = self._head
+            self._head = None
+            self._tail = None
+            self._length -= 1
+            return removed.data
 
         # Remove at head
-        if index == 0:
-            assert self.head is not None  # Inconsistent state
-            assert self.head.next is not None  # Inconsistent state
-            self.head = self.head.next
-            self.head.prev = None
-            self.length -= 1
-            return
+        if position == 0:
+            removed = self._head
+            after = self._head.next
+            assert after is not None
+            self._head = after
+            self._head.prev = None
+            self._length -= 1
+            return removed.data
 
         # Remove at tail
-        if index == (self.length - 1):
-            assert self.tail is not None  # Inconsistent state
-            assert self.tail.prev is not None  # Inconsistent state
-            self.tail = self.tail.prev
-            self.tail.next = None
-            self.length -= 1
-            return
+        if position == (self._length - 1):
+            removed = self._tail
+            before = self.traverse(self._length - 2)
+            assert before is not None  # Inconsistent state
+            before.next = None
+            self._tail = before
+            self._length -= 1
+            return removed.data
 
         # Remove in middle
-        if 0 < index < self.length - 1:
-            before = self.search(index - 1)
-            assert before is not None  # Inconsistent state
-            current = before.next
-            assert current is not None  # Inconsistent state
-            after = current.next
+        if 0 < position < self._length - 1:
+            before = self.traverse(position - 1)
+            assert before.next is not None  # Inconsistent state
+            removed = before.next
+            after = removed.next
             assert after is not None  # Inconsistent state
             before.next = after
             after.prev = before
-            self.length -= 1
-            return
+            self._length -= 1
+            return removed.data
 
-        raise IndexError("Index out of range")
+        raise OutOfBounds
+
+    def __repr__(self) -> str:
+        return (
+            f"<LinkedList(length={self.length}, head={self._head}, tail={self._tail})>"
+        )
+
+    def __iter__(self) -> Generator[Node]:
+        current = self._head
+        while current:
+            yield current
+            current = current.next

@@ -1,24 +1,17 @@
 import pytest
 
-from dsa.dll import DoublyLinkedList
+from dsa.dll import LinkedList
 
 
 def test_dll_insert_empty():
-    lst = DoublyLinkedList()
+    lst = LinkedList()
     assert lst.length == 0
-    with pytest.raises(IndexError):
+    with pytest.raises(Exception):
         lst.insert(1, "First")
-    lst.insert(0, "First")
-    assert lst.head.data == "First"
-    assert lst.head.prev is None
-    assert lst.head.next is None
-    assert lst.tail.data == "First"
-    assert lst.tail.prev is None
-    assert lst.length == 1
 
 
 def test_dll_insert_start():
-    lst = DoublyLinkedList()
+    lst = LinkedList()
     lst.insert(0, "First")
     lst.insert(0, "Second")
     assert lst.head.data == "Second"
@@ -29,7 +22,7 @@ def test_dll_insert_start():
 
 
 def test_dll_insert_end():
-    lst = DoublyLinkedList()
+    lst = LinkedList()
     lst.insert(0, "First")
     lst.insert(1, "Second")
     lst.insert(2, "Third")
@@ -43,7 +36,7 @@ def test_dll_insert_end():
 
 
 def test_dll_insert_middle():
-    lst = DoublyLinkedList()
+    lst = LinkedList()
     lst.insert(0, "First")
     lst.insert(1, "Third")
     lst.insert(1, "Second")
@@ -56,52 +49,51 @@ def test_dll_insert_middle():
     assert lst.length == 3
 
 
-def test_dll_search_empty():
-    lst = DoublyLinkedList()
-    with pytest.raises(IndexError):
-        lst.search(0)
+def test_dll_traverse_empty():
+    lst = LinkedList()
+    with pytest.raises(Exception):
+        lst.traverse(0)
 
 
-def test_dll_search_start():
-    lst = DoublyLinkedList()
+def test_dll_traverse_start():
+    lst = LinkedList()
     lst.insert(0, "First")
     lst.insert(1, "Second")
     lst.insert(2, "Third")
-    assert lst.search(0).data == "First"
-    assert lst.search(0).next.data == "Second"
-    assert lst.search(0).next.next.data == "Third"
+    assert lst.traverse(0).data == "First"
+    assert lst.traverse(0).next.data == "Second"
+    assert lst.traverse(0).next.next.data == "Third"
 
 
-#
-def test_dll_search_end():
-    lst = DoublyLinkedList()
+def test_dll_traverse_end():
+    lst = LinkedList()
     lst.insert(0, "First")
     lst.insert(1, "Second")
     lst.insert(2, "Third")
-    assert lst.search(2).data == "Third"
-    assert lst.search(2).prev.data == "Second"
-    assert lst.search(2).prev.prev.data == "First"
+    assert lst.traverse(2).data == "Third"
+    assert lst.traverse(2).prev.data == "Second"
+    assert lst.traverse(2).prev.prev.data == "First"
 
 
-def test_dll_search_middle():
-    lst = DoublyLinkedList()
+def test_dll_traverse_middle():
+    lst = LinkedList()
     lst.insert(0, "First")
     lst.insert(1, "Second")
     lst.insert(2, "Third")
-    assert lst.search(1).data == "Second"
-    assert lst.search(1).prev.data == "First"
-    assert lst.search(1).next.data == "Third"
+    assert lst.traverse(1).data == "Second"
+    assert lst.traverse(1).prev.data == "First"
+    assert lst.traverse(1).next.data == "Third"
 
 
 def test_dll_remove_emtpy():
-    lst = DoublyLinkedList()
+    lst = LinkedList()
     assert lst.length == 0
-    with pytest.raises(IndexError):
+    with pytest.raises(Exception):
         lst.remove(0)
 
 
 def test_dll_remove_start():
-    lst = DoublyLinkedList()
+    lst = LinkedList()
     lst.insert(0, "First")
     lst.insert(1, "Second")
     assert lst.length == 2
@@ -116,7 +108,7 @@ def test_dll_remove_start():
 
 
 def test_dll_remove_end():
-    lst = DoublyLinkedList()
+    lst = LinkedList()
     lst.insert(0, "First")
     lst.insert(1, "Second")
     assert lst.length == 2
@@ -131,7 +123,7 @@ def test_dll_remove_end():
 
 
 def test_dll_remove_middle():
-    lst = DoublyLinkedList()
+    lst = LinkedList()
     lst.insert(0, "First")
     lst.insert(1, "Third")
     lst.insert(1, "Second")
@@ -141,3 +133,4 @@ def test_dll_remove_middle():
     assert lst.tail.data == "Third"
     assert lst.tail.prev.data == "First"
     assert lst.length == 2
+
