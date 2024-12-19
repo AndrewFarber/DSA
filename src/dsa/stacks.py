@@ -5,13 +5,13 @@ This module provides implementations for a stack using a linked lists.
 from __future__ import annotations
 from typing import Any
 
-from dsa.sll import SinglyLinkedList
+from dsa.sll import LinkedList
 
 
 class Stack:
     def __init__(self) -> None:
         """Last-in-first-out (LIFO) linear data structure."""
-        self._lst = SinglyLinkedList()
+        self._lst = LinkedList()
 
     def push(self, value: Any) -> None:
         """Add an element to the stack"""
@@ -21,13 +21,13 @@ class Stack:
         """Remove an element from the stack"""
         if self._lst.length == 0:
             raise Exception("Cannot pop from an empty stack")
-        return self._lst.remove(0).data
+        return self._lst.remove(0)
 
     def peek(self) -> Any:
         """View the first element in the stack without removing it"""
         if self._lst.length == 0:
             raise Exception("Cannot peek from an empty stack")
-        return self._lst.search(0).data
+        return self._lst.traverse(0).data
 
     def search(self, value: Any) -> Any:
         """
@@ -40,5 +40,7 @@ class Stack:
         return val.data
 
     def size(self) -> int:
-        """Return the number of elements in the stack. An empty stack returns zero."""
+        """
+        Return the number of elements in the stack. An empty stack returns zero.
+        """
         return self._lst.length
