@@ -5,7 +5,7 @@ This module provides implementations for a stack using a linked lists.
 from __future__ import annotations
 from typing import Any
 
-from dsa.linked_lists import SinglyLinkedList
+from dsa.sll import SinglyLinkedList
 
 
 class Stack:
