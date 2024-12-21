@@ -3,7 +3,7 @@ This module provides an implementation for a singly linked lists.
 """
 
 from __future__ import annotations
-from typing import Any, Generator
+from typing import Any
 
 
 class InconsistentState(Exception):
@@ -21,7 +21,8 @@ class OutOfBounds(Exception):
 class Node:
     def __init__(self, data: Any, next: Node | None = None) -> None:
         """
-        Instantiate a node with data. Optionally point to a next node.
+        Instantiate a node with data.
+        Optionally point to a next node.
         """
         self.data: Any = data
         self.next: Node | None = next
@@ -32,15 +33,15 @@ class Node:
 
 class LinkedList:
     """
-    A linked list is a sequential list of nodes that hold data and
-    point to other nodes.
+    A linked list is a linear collection of nodes
+    that hold data and point to other nodes.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Instantiate a linked list containing no nodes.
         """
-        self._length = 0
+        self._length: int = 0
         self._head: Node | None = None
         self._tail: Node | None = None
 
@@ -65,61 +66,12 @@ class LinkedList:
         """
         return self._tail
 
-    def traverse(self, position: int) -> Node:
-        """
-        Get the node at the specified position.
-
-        For a linked list containing n nodes, the first
-        node in the linked list is at position zero
-        and the last node in the linked list is at
-        position n-1.
-        """
-        if self._length == 0:
-            raise EmptyList
-        if not (0 <= position < self._length):
-            raise OutOfBounds
-        if self._head is None or self._tail is None:
-            raise InconsistentState
-
-        if position == 0:
-            return self._head
-        elif position == self._length - 1:
-            return self._tail
-        else:
-            node = self._head
-            for _ in range(position):
-                assert node is not None  # Inconsistent state
-                node = node.next
-            assert node is not None  # Inconsistent state
-            return node
-
-    def find(self, value: Any) -> Node | None:
-        """
-        Return the first node containing the data that matches
-        the specified value. If the value is not found, returns None.
-        """
-        current = self._head
-        while current:
-            if current.data == value:
-                return current
-            else:
-                current = current.next
-        return None
-
-    def contains(self, value: Any) -> bool:
-        """
-        Scans the linked list for the specified value.
-        If the linked list contains the value, returns True.
-        Otherwise, the function will return False.
-        """
-        return self.find(value) is not None
-
     def insert(self, position: int, data: Any) -> Node:
         """
         Insert a node with the provided data at the specified position.
         Returns the new node.
 
-        If the provided index matches the length of the list, a new node
+        If the provided position matches the length of the list, a new node
         will be appended to the end.
         """
         # Insert first node
@@ -203,13 +155,30 @@ class LinkedList:
 
         raise OutOfBounds
 
-    def __repr__(self) -> str:
-        return (
-            f"<LinkedList(length={self.length}, head={self._head}, tail={self._tail})>"
-        )
+    def traverse(self, position: int) -> Node:
+        """
+        Get the node at the specified position.
 
-    def __iter__(self) -> Generator[Node]:
-        current = self._head
-        while current:
-            yield current
-            current = current.next
+        For a linked list containing n nodes, the first
+        node in the linked list is at position zero
+        and the last node in the linked list is at
+        position n-1.
+        """
+        if self._length == 0:
+            raise EmptyList
+        if not (0 <= position < self._length):
+            raise OutOfBounds
+        if self._head is None or self._tail is None:
+            raise InconsistentState
+
+        if position == 0:
+            return self._head
+        elif position == self._length - 1:
+            return self._tail
+        else:
+            node: Node | None = self._head
+            for _ in range(position):
+                assert node is not None  # Inconsistent state
+                node = node.next
+            assert node is not None  # Inconsistent state
+            return node

@@ -114,27 +114,3 @@ def test_sll_remove_middle():
     assert lst.tail.data == "Third"
     assert lst.head.next == lst.tail
     assert lst.length == 2
-
-
-def test_sll_find():
-    lst = LinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    lst.insert(2, "Third")
-    assert lst.length == 3
-    assert lst.find("First") == lst.head
-    assert lst.find("Third") == lst.tail
-    assert lst.find("Fourth") is None
-
-
-def test_sll_contains():
-    lst = LinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    lst.insert(2, "Third")
-    lst.insert(3, None)
-    assert lst.length == 4
-    assert lst.contains("First") is True
-    assert lst.contains("Third") is True
-    assert lst.contains(None) is True
-    assert lst.contains("Fourth") is False
