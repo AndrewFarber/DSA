@@ -28,4 +28,3 @@ class Queue:
         if self._lst.length == 0:
             raise Exception("Cannot dequeue an empty queue")
         return self._lst.remove(0)
-

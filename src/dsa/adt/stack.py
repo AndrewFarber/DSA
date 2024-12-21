@@ -28,4 +28,3 @@ class Stack:
         if self._lst.length == 0:
             raise Exception("Cannot pop from an empty stack")
         return self._lst.remove(0)
-
