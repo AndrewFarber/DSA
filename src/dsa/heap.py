@@ -76,6 +76,8 @@ class BinaryHeap:
 
             if index_value < parent_value:
                 self._swap(index, parent_index)
+            else:
+                break
             index = parent_index
             parent_index = self._parent(index)
 
@@ -98,11 +100,15 @@ class BinaryHeap:
             if right_child_value is not None and right_child_value < left_child_value:
                 if right_child_value < index_value:
                     self._swap(index, right_child_index)
+                else:
+                    break
                 index = right_child_index
                 left_child_index = self._left_child(index)
             # Swap left
             else:
                 if left_child_value < index_value:
                     self._swap(index, left_child_index)
+                else:
+                    break
                 index = left_child_index
                 left_child_index = self._left_child(index)
