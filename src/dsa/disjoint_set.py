@@ -73,13 +73,3 @@ class DisjointSet:
         i = self._get_index(element)
         irep = self._find(i)
         return self._index_map[irep]
-
-
-if __name__ == "__main__":
-    elements = set(["A", "B", "C", "D"])
-    uf = DisjointSet(elements)
-
-    uf.union("A", "B")
-    uf.union("B", "C")
-    print("A and C are related:", uf.find("A") == uf.find("C"))
-    print("A and D are related:", uf.find("A") == uf.find("D"))
