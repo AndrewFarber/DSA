@@ -62,22 +62,27 @@ class BinarySearchTree:
         return self._search(self._root, key)
 
     def _successor(self, node: Node) -> Node:
-        # _successor only called with node has left & right children
-        assert node.right is not None  
+        """Returned successor is the smallest of the larger keys."""
+        # _successor only called with node has left & right children.
+        # The returned node is always a leaf.
+        assert node.right is not None
         node = node.right
         while node is not None and node.left is not None:
             node = node.left
         return node
 
     def _delete(self, node: Node | None, key: Any) -> Node | None:
+        # key not in BST
         if node is None:
-            return node
+            return None
 
         if node.key > key:
             node.left = self._delete(node.left, key)
         elif node.key < key:
             node.right = self._delete(node.right, key)
         else:
+            # Found key in BST. Skip
+            # over the node to delete
             if node.left is None:
                 return node.right
             if node.right is None:
