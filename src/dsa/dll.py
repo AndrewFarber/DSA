@@ -189,17 +189,18 @@ class LinkedList:
         if self._head is None or self._tail is None:
             raise InconsistentState
 
+        node: Node | None = None
         if position == 0:
             return self._head
         elif position == self._length - 1:
             return self._tail
         elif position <= self._length // 2:
-            node: Node | None = self._head
+            node = self._head
             for _ in range(position):
                 assert node is not None  # Inconsistent state
                 node = node.next
         else:
-            node: Node | None = self._tail
+            node = self._tail
             for _ in range(self._length - 1, position, -1):
                 assert node is not None  # Inconsistent state
                 node = node.next
