@@ -16,7 +16,7 @@ def search(array: list[int], key: int) -> int:
             return i
     return -1
 
+
 assert search([1, 2, 3, 4], 3) == 2
 assert search([10, 8, 30, 4, 5], 5) == 4
 assert search([10, 8, 30], 6) == -1
-
