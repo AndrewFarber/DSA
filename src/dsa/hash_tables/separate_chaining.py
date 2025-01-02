@@ -1,5 +1,6 @@
 """
-This module provides an example implementation for a hash table. Since Python
+This module provides an example implementation for a hash table
+using the seperate chaining collision resolution technique. Since Python
 already contains a hash table primitive (i.e., `dict`), the below code should
 only be used for learning purposes.
 """

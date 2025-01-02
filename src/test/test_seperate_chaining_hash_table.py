@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from dsa.hash_table import HashTable
+from dsa.hash_tables.separate_chaining import HashTable
 
 
 def test_insert_and_get():
@@ -48,7 +48,7 @@ def test_resize():
         assert ht.get(f"key{i}") == f"value{i}"
 
 
-@patch("dsa.hash_table.hash")
+@patch("dsa.hash_tables.separate_chaining.hash")
 def test_collision_handling(mock_hash):
     mock_hash.return_value = 1
 
