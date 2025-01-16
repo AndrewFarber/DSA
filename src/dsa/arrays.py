@@ -41,7 +41,7 @@ class StaticArray:
         """
         Return the element in the array at the specified `index`.
         """
-        if index <= (self.length - 1):
+        if 0 <= index <= (self.length - 1):
             return self.array[index]
         else:
             raise IndexError
@@ -50,7 +50,7 @@ class StaticArray:
         """
         Set the element in the array at the specified `index`.
         """
-        if index <= (self.length - 1):
+        if 0 <= index <= (self.length - 1):
             self.array[index] = value
         else:
             raise IndexError

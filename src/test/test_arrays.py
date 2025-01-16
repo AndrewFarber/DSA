@@ -1,127 +1,119 @@
+import pytest
+
 from dsa.arrays import StaticArray, DynamicArray
 
 
-def test_static_array_size():
-    a = StaticArray(5)
-    assert a.size() == 5
+def test_static_array_initialization():
+    array = StaticArray(5)
+    assert array.size() == 5
+    assert array.array == [None, None, None, None, None]
+
+
+def test_static_array_invalid_initialization():
+    with pytest.raises(ValueError):
+        StaticArray(0)
+    with pytest.raises(ValueError):
+        StaticArray(-5)
+
+
+def test_static_array_get_set_valid():
+    array = StaticArray(3)
+    array.set(0, "a")
+    array.set(1, "b")
+    array.set(2, "c")
+    assert array.get(0) == "a"
+    assert array.get(1) == "b"
+    assert array.get(2) == "c"
+
+
+def test_static_array_get_set_invalid():
+    array = StaticArray(3)
+    with pytest.raises(IndexError):
+        array.get(-1)
+    with pytest.raises(IndexError):
+        array.get(3)
+    with pytest.raises(IndexError):
+        array.set(3, "x")
 
 
 def test_static_array_clear():
-    a = StaticArray(3)
-    a.array[0] = 1
-    a.array[1] = 2
-    a.array[2] = 3
-    a.clear()
-    assert a.array[0] is None
-    assert a.array[1] is None
-    assert a.array[2] is None
-
-
-def test_static_array_get():
-    a = StaticArray(5)
-    a.array[0] = 1
-    a.array[2] = 2
-    a.array[4] = 3
-    assert a.get(0) == 1
-    assert a.get(1) is None
-    assert a.get(2) == 2
-    assert a.get(4) == 3
-
-
-def test_static_array_set():
-    a = StaticArray(5)
-    a.array[0] = 1
-    a.array[2] = 2
-    a.array[4] = 3
-    a.set(0, 4)
-    a.set(1, 5)
-    a.set(2, 6)
-    a.set(4, 7)
-    assert a.get(0) == 4
-    assert a.get(1) == 5
-    assert a.get(2) == 6
-    assert a.get(3) is None
-    assert a.get(4) == 7
+    array = StaticArray(3)
+    array.set(0, 1)
+    array.set(1, 2)
+    array.set(2, 3)
+    array.clear()
+    assert array.array == [None, None, None]
 
 
 def test_static_array_contains():
-    a = StaticArray(5)
-    a.array[0] = 1
-    a.array[2] = 2
-    a.array[4] = 3
-    assert a.contains(2) is True
-    assert a.contains(4) is False
+    array = StaticArray(3)
+    array.set(0, "x")
+    array.set(1, "y")
+    array.set(2, "z")
+    assert array.contains("x") is True
+    assert array.contains("a") is False
 
 
-def test_dynamic_array_size():
-    a = DynamicArray(5)
-    assert a.size() == 5
-
-
-def test_dynamic_array_clear():
-    a = DynamicArray(3)
-    a.set(0, 1)
-    a.set(1, 2)
-    a.set(2, 3)
-    a.clear()
-    assert a.get(0) is None
-    assert a.get(1) is None
-    assert a.get(2) is None
-
-
-def test_dynamic_array_get():
-    a = DynamicArray(3)
-    a.set(0, 1)
-    a.set(1, 2)
-    a.set(2, 3)
-    assert a.get(0) == 1
-    assert a.get(1) == 2
-    assert a.get(2) == 3
-
-
-def test_dynamic_array_set():
-    a = DynamicArray(3)
-    a.set(0, 1)
-    a.set(2, 3)
-    assert a.get(0) == 1
-    assert a.get(1) is None
-    assert a.get(2) == 3
-
-
-def test_dynamic_array_contains():
-    a = DynamicArray(3)
-    a.set(0, 1)
-    a.set(1, 2)
-    a.set(2, 3)
-    assert a.contains(2) is True
-    assert a.contains(4) is False
-
-
-def test_dynamic_array_insert():
-    a = DynamicArray(3)
-    a.set(0, 1)
-    a.set(1, 2)
-    a.set(2, 3)
-    a.insert(4)
-    assert a.get(0) == 4
-    assert a.get(3) == 3
+def test_dynamic_array_initialization():
+    array = DynamicArray(2)
+    assert array.size() == 2
 
 
 def test_dynamic_array_append():
-    a = DynamicArray(3)
-    a.set(0, 1)
-    a.set(1, 2)
-    a.set(2, 3)
-    a.append(4)
-    assert a.get(0) == 1
-    assert a.get(3) == 4
+    array = DynamicArray(2)
+    array.set(0, "a")
+    array.set(1, "b")
+    array.append("c")
+    assert array.size() == 3
+    assert array.get(0) == "a"
+    assert array.get(1) == "b"
+    assert array.get(2) == "c"
+
+
+def test_dynamic_array_insert():
+    array = DynamicArray(2)
+    array.set(0, "b")
+    array.set(1, "c")
+    array.insert("a")
+    assert array.size() == 3
+    assert array.get(0) == "a"
+    assert array.get(1) == "b"
+    assert array.get(2) == "c"
 
 
 def test_dynamic_array_delete():
-    a = DynamicArray(3)
-    a.set(0, 1)
-    a.set(1, 2)
-    a.set(2, 3)
-    a.delete(1)
-    assert a.get(0) == 1
-    assert a.get(1) == 3
+    array = DynamicArray(3)
+    array.set(0, "x")
+    array.set(1, "y")
+    array.set(2, "z")
+    array.delete(1)
+    assert array.size() == 2
+    assert array.get(0) == "x"
+    assert array.get(1) == "z"
+
+
+def test_dynamic_array_delete_invalid():
+    array = DynamicArray(2)
+    with pytest.raises(IndexError):
+        array.delete(5)
+    with pytest.raises(IndexError):
+        array.delete(-1)
+
+
+def test_dynamic_array_contains():
+    array = DynamicArray(3)
+    array.set(0, 10)
+    array.set(1, 20)
+    array.set(2, 30)
+    assert array.contains(20) is True
+    assert array.contains(40) is False
+
+
+def test_dynamic_array_clear():
+    array = DynamicArray(3)
+    array.set(0, 1)
+    array.set(1, 2)
+    array.set(2, 3)
+    array.clear()
+    for i in range(array.size()):
+        assert array.get(i) is None
