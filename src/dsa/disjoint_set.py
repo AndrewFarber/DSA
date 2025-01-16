@@ -7,7 +7,7 @@ from typing import Set
 
 
 class DisjointSet:
-    def __init__(self, elements: Set) -> None:
+    def __init__(self, elements: Set[Hashable]) -> None:
         """
         Initialize the DisjointSet data structure with a set of elements.
 
@@ -51,10 +51,9 @@ class DisjointSet:
             self._size[irep] += jsize
 
     def _find(self, i: int) -> int:
-        irep = self._array[i]
-        if i != irep:
-            self._array[i] = self._find(irep)  # Path compression
-        return irep
+        if i != self._array[i]:
+            self._array[i] = self._find(self._array[i])  # Path compression
+        return self._array[i]
 
     def union(self, element_1: Hashable, element_2: Hashable) -> None:
         """
