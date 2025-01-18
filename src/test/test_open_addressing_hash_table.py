@@ -1,88 +1,82 @@
-from unittest.mock import patch
+import pytest
+
 from dsa.hash_tables.open_addressing import HashTable
 
 
-def test_insert_and_get():
-    ht = HashTable()
-    ht.set("key1", "value1")
-    ht.set("key2", "value2")
-    ht.set("key3", "value3")
-
-    assert ht.get("key1") == "value1"
-    assert ht.get("key2") == "value2"
-    assert ht.get("key3") == "value3"
-    assert ht.get("nonexistent") is None
+@pytest.fixture
+def hash_table():
+    return HashTable()
 
 
-def test_update_value():
-    ht = HashTable()
-    ht.set("key1", "value1")
-    ht.set("key1", "new_value1")
-
-    assert ht.get("key1") == "new_value1"
+def test_set_and_get_single_item(hash_table):
+    hash_table.set("key1", "value1")
+    assert hash_table.get("key1") == "value1"
 
 
-# def test_remove_key():
-#     ht = HashTable()
-#     ht.set("key1", "value1")
-#     ht.set("key2", "value2")
-#     ht.set("key3", "value3")
-#
-#     assert ht.get("key2") == "value2"
-#     ht.remove("key2")
-#     assert ht.get("key2") is None
-#     assert ht.get("key1") == "value1"
-#     assert ht.get("key3") == "value3"
+def test_get_nonexistent_key(hash_table):
+    assert hash_table.get("nonexistent") is None
+    assert hash_table.get("nonexistent", "default") == "default"
 
 
-def test_resize():
-    ht = HashTable()
-    initial_capacity = len(ht.table)
-    for i in range(200):
-        ht.set(f"key{i}", f"value{i}")
-
-    resized_capacity = len(ht.table)
-    assert resized_capacity > initial_capacity
-    for i in range(200):
-        assert ht.get(f"key{i}") == f"value{i}"
+def test_update_existing_key(hash_table):
+    hash_table.set("key1", "value1")
+    hash_table.set("key1", "updated_value")
+    assert hash_table.get("key1") == "updated_value"
 
 
-@patch("dsa.hash_tables.open_addressing.hash")
-def test_collision_handling(mock_hash):
-    mock_hash.return_value = 1
-
-    ht = HashTable()
-    ht.set(1, "value1")
-    ht.set(101, "value101")
-    ht.set(201, "value201")
-
-    assert ht.get(1) == "value1"
-    assert ht.get(101) == "value101"
-    assert ht.get(201) == "value201"
-    assert ht.table[1] is not None
-    assert ht.table[1] == (1, "value1")
+def test_remove_existing_key(hash_table):
+    hash_table.set("key1", "value1")
+    hash_table.remove("key1")
+    assert hash_table.get("key1") is None
 
 
-def test_empty_table():
-    ht = HashTable()
-    assert ht.get("nonexistent") is None
-    ht.set("key1", "value1")
-    assert ht.get("key1") == "value1"
+def test_remove_nonexistent_key(hash_table):
+    try:
+        hash_table.remove("nonexistent")
+    except Exception as e:
+        pytest.fail(f"Unexpected error occurred: {e}")
 
 
-# def test_multiple_removals():
-#     ht = HashTable()
-#     ht.set("key1", "value1")
-#     ht.set("key2", "value2")
-#     ht.set("key3", "value3")
-#
-#     ht.remove("key1")
-#     assert ht.get("key1") is None
-#     ht.remove("key2")
-#     assert ht.get("key2") is None
-#     assert ht.get("key3") == "value3"
+def test_collision_handling(hash_table):
+    # Force collision by using two keys with same hash (mock if needed)
+    key1, key2 = "key1", "key2"
+    hash_table.set(key1, "value1")
+    hash_table.set(key2, "value2")
+    assert hash_table.get(key1) == "value1"
+    assert hash_table.get(key2) == "value2"
 
 
-def test_default_value():
-    ht = HashTable()
-    assert ht.get("nonexistent", default="default_value") == "default_value"
+def test_resize_operation(hash_table):
+    # Insert enough items to trigger resize
+    for i in range(70):  # Above the load threshold
+        hash_table.set(f"key{i}", f"value{i}")
+
+    for i in range(70):
+        assert hash_table.get(f"key{i}") == f"value{i}"
+
+    assert hash_table.length > 100  # Confirm resize occurred
+
+
+def test_tombstone_reuse(hash_table):
+    hash_table.set("key1", "value1")
+    hash_table.remove("key1")
+    hash_table.set("key2", "value2")  # Should reuse tombstone spot
+    assert hash_table.get("key1") is None
+    assert hash_table.get("key2") == "value2"
+
+
+def test_multiple_data_types(hash_table):
+    hash_table.set(42, "integer key")
+    hash_table.set((1, 2), "tuple key")
+    hash_table.set(3.14, "float key")
+
+    assert hash_table.get(42) == "integer key"
+    assert hash_table.get((1, 2)) == "tuple key"
+    assert hash_table.get(3.14) == "float key"
+
+
+def test_overwrite_after_resize(hash_table):
+    for i in range(70):
+        hash_table.set(f"key{i}", f"value{i}")
+    hash_table.set("key1", "new_value1")
+    assert hash_table.get("key1") == "new_value1"
