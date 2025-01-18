@@ -126,7 +126,7 @@ class LinkedList:
         Remove the node at the specified position.
         Returns the data contained in the removed node.
         """
-        if self._length == 0:
+        if self._length == 0 and self._head is None and self._tail is None:
             raise EmptyList
         if self._head is None or self._tail is None:
             raise InconsistentState
@@ -182,7 +182,7 @@ class LinkedList:
         and the last node in the linked list is at
         position n-1.
         """
-        if self._length == 0:
+        if self._length == 0 and self._head is None and self._tail is None:
             raise EmptyList
         if not (0 <= position < self._length):
             raise OutOfBounds
