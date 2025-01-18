@@ -2,22 +2,23 @@
 This module provides an implementation for disjoint set.
 """
 
-from collections.abc import Hashable
-from typing import Set
+from collections.abc import Hashable, Iterable
 
 
 class DisjointSet:
-    def __init__(self, elements: Set[Hashable]) -> None:
+    def __init__(self, elements: Iterable[Hashable]) -> None:
         """
         Initialize the DisjointSet data structure with a set of elements.
 
         At initialization, each element will be in its own component.
+        Duplicated elements are removed.
         """
         self._index_map: dict[int, Hashable] = {}
         self._element_map: dict[Hashable, int] = {}
         self._array: list[int] = list()
         self._size: list[int] = list()
 
+        elements = set(elements)
         for i, element in enumerate(elements):
             self._index_map[i] = element
             self._element_map[element] = i
