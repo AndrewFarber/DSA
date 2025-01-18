@@ -2,134 +2,110 @@ import pytest
 
 from dsa.dll import LinkedList
 
-
-def test_dll_insert_empty():
-    lst = LinkedList()
-    assert lst.length == 0
-    with pytest.raises(Exception):
-        lst.insert(1, "First")
+from dsa.dll import Node, EmptyList, OutOfBounds, InconsistentState
 
 
-def test_dll_insert_start():
-    lst = LinkedList()
-    lst.insert(0, "First")
-    lst.insert(0, "Second")
-    assert lst.head.data == "Second"
-    assert lst.tail.data == "First"
-    assert lst.head.next == lst.tail
-    assert lst.tail.prev == lst.head
-    assert lst.length == 2
+@pytest.fixture
+def empty_list():
+    return LinkedList()
 
 
-def test_dll_insert_end():
-    lst = LinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    lst.insert(2, "Third")
-    assert lst.head.data == "First"
-    assert lst.head.next.data == "Second"
-    assert lst.head.next.next.data == "Third"
-    assert lst.tail.data == "Third"
-    assert lst.tail.prev.data == "Second"
-    assert lst.tail.prev.prev.data == "First"
-    assert lst.length == 3
+@pytest.fixture
+def populated_list():
+    ll = LinkedList()
+    ll.insert(0, "a")
+    ll.insert(1, "b")
+    ll.insert(2, "c")
+    return ll
 
 
-def test_dll_insert_middle():
-    lst = LinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Third")
-    lst.insert(1, "Second")
-    assert lst.head.data == "First"
-    assert lst.head.next.data == "Second"
-    assert lst.head.next.next.data == "Third"
-    assert lst.tail.data == "Third"
-    assert lst.tail.prev.data == "Second"
-    assert lst.tail.prev.prev.data == "First"
-    assert lst.length == 3
+def test_insert_head(empty_list):
+    node = empty_list.insert(0, "head")
+    assert empty_list.length == 1
+    assert empty_list.head == node
+    assert empty_list.tail == node
+    assert node.data == "head"
 
 
-def test_dll_traverse_empty():
-    lst = LinkedList()
-    with pytest.raises(Exception):
-        lst.traverse(0)
+def test_insert_tail(populated_list):
+    node = populated_list.insert(3, "tail")
+    assert populated_list.length == 4
+    assert populated_list.tail == node
+    assert node.data == "tail"
+    assert populated_list.traverse(3).data == "tail"
 
 
-def test_dll_traverse_start():
-    lst = LinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    lst.insert(2, "Third")
-    assert lst.traverse(0).data == "First"
-    assert lst.traverse(0).next.data == "Second"
-    assert lst.traverse(0).next.next.data == "Third"
+def test_insert_middle(populated_list):
+    node = populated_list.insert(1, "middle")
+    assert populated_list.length == 4
+    assert populated_list.traverse(1) == node
+    assert node.data == "middle"
+    assert populated_list.traverse(0).next == node
+    assert node.prev == populated_list.traverse(0)
 
 
-def test_dll_traverse_end():
-    lst = LinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    lst.insert(2, "Third")
-    assert lst.traverse(2).data == "Third"
-    assert lst.traverse(2).prev.data == "Second"
-    assert lst.traverse(2).prev.prev.data == "First"
+def test_insert_out_of_bounds(empty_list):
+    with pytest.raises(OutOfBounds):
+        empty_list.insert(2, "fail")
 
 
-def test_dll_traverse_middle():
-    lst = LinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    lst.insert(2, "Third")
-    assert lst.traverse(1).data == "Second"
-    assert lst.traverse(1).prev.data == "First"
-    assert lst.traverse(1).next.data == "Third"
+def test_remove_head(populated_list):
+    data = populated_list.remove(0)
+    assert data == "a"
+    assert populated_list.length == 2
+    assert populated_list.head.data == "b"
 
 
-def test_dll_remove_emtpy():
-    lst = LinkedList()
-    assert lst.length == 0
-    with pytest.raises(Exception):
-        lst.remove(0)
+def test_remove_tail(populated_list):
+    data = populated_list.remove(2)
+    assert data == "c"
+    assert populated_list.length == 2
+    assert populated_list.tail.data == "b"
 
 
-def test_dll_remove_start():
-    lst = LinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    assert lst.length == 2
-    lst.remove(0)
-    assert lst.head.data == "Second"
-    assert lst.tail.data == "Second"
-    assert lst.head.next is None
-    assert lst.head.prev is None
-    assert lst.tail.next is None
-    assert lst.tail.prev is None
-    assert lst.length == 1
+def test_remove_middle(populated_list):
+    data = populated_list.remove(1)
+    assert data == "b"
+    assert populated_list.length == 2
+    assert populated_list.traverse(1).data == "c"
 
 
-def test_dll_remove_end():
-    lst = LinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    assert lst.length == 2
-    lst.remove(1)
-    assert lst.head.data == "First"
-    assert lst.tail.data == "First"
-    assert lst.head.next is None
-    assert lst.head.prev is None
-    assert lst.tail.next is None
-    assert lst.tail.prev is None
-    assert lst.length == 1
+def test_remove_empty_list(empty_list):
+    with pytest.raises(EmptyList):
+        empty_list.remove(0)
 
 
-def test_dll_remove_middle():
-    lst = LinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Third")
-    lst.insert(1, "Second")
-    lst.remove(1)
-    assert lst.head.data == "First"
-    assert lst.head.next.data == "Third"
-    assert lst.tail.data == "Third"
-    assert lst.tail.prev.data == "First"
-    assert lst.length == 2
+def test_traverse_head(populated_list):
+    node = populated_list.traverse(0)
+    assert node.data == "a"
+
+
+def test_traverse_tail(populated_list):
+    node = populated_list.traverse(2)
+    assert node.data == "c"
+
+
+def test_traverse_middle(populated_list):
+    node = populated_list.traverse(1)
+    assert node.data == "b"
+
+
+def test_traverse_out_of_bounds(populated_list):
+    with pytest.raises(OutOfBounds):
+        populated_list.traverse(5)
+
+
+def test_remove_only_node(empty_list):
+    empty_list.insert(0, "solo")
+    data = empty_list.remove(0)
+    assert data == "solo"
+    assert empty_list.length == 0
+    assert empty_list.head is None
+    assert empty_list.tail is None
+
+
+def test_inconsistent_state(empty_list):
+    empty_list._head = None
+    empty_list._tail = Node("corrupt")
+    with pytest.raises(InconsistentState):
+        empty_list.remove(0)
