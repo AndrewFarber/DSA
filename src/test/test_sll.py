@@ -2,115 +2,142 @@ import pytest
 
 from dsa.sll import LinkedList
 
-
-def test_sll_insert_empty():
-    lst = LinkedList()
-    assert lst.length == 0
-    with pytest.raises(Exception):
-        lst.insert(1, "First")
+from dsa.sll import EmptyList, OutOfBounds, InconsistentState
 
 
-def test_sll_insert_start():
-    lst = LinkedList()
-    assert lst.insert(0, "First").data == "First"
-    assert lst.insert(0, "Second").data == "Second"
-    assert lst.head.data == "Second"
-    assert lst.tail.data == "First"
-    assert lst.head.next == lst.tail
-    assert lst.length == 2
+def test_insert_into_empty_list():
+    ll = LinkedList()
+    node = ll.insert(0, 10)
+    assert node.data == 10
+    assert ll.length == 1
+    assert ll.head == node
+    assert ll.tail == node
 
 
-def test_sll_insert_end():
-    lst = LinkedList()
-    assert lst.insert(0, "First").data == "First"
-    assert lst.insert(1, "Second").data == "Second"
-    assert lst.insert(2, "Third").data == "Third"
-    assert lst.head.data == "First"
-    assert lst.head.next.data == "Second"
-    assert lst.tail.data == "Third"
-    assert lst.length == 3
+def test_insert_at_head():
+    ll = LinkedList()
+    ll.insert(0, 10)
+    ll.insert(0, 20)
+    assert ll.head.data == 20
+    assert ll.head.next.data == 10
+    assert ll.length == 2
 
 
-def test_sll_insert_middle():
-    lst = LinkedList()
-    assert lst.insert(0, "First").data == "First"
-    assert lst.insert(1, "Second").data == "Second"
-    assert lst.insert(1, "Third").data == "Third"
-    assert lst.head.data == "First"
-    assert lst.head.next.data == "Third"
-    assert lst.tail.data == "Second"
-    assert lst.length == 3
+def test_insert_at_tail():
+    ll = LinkedList()
+    ll.insert(0, 10)
+    ll.insert(1, 20)
+    ll.insert(2, 30)
+    assert ll.tail.data == 30
+    assert ll.length == 3
 
 
-def test_sll_traverse_empty():
-    lst = LinkedList()
-    with pytest.raises(Exception):
-        lst.traverse(0)
+def test_insert_in_middle():
+    ll = LinkedList()
+    ll.insert(0, 10)
+    ll.insert(1, 30)
+    ll.insert(1, 20)
+    assert ll.traverse(0).data == 10
+    assert ll.traverse(1).data == 20
+    assert ll.traverse(2).data == 30
+    assert ll.length == 3
 
 
-def test_sll_traverse_start():
-    lst = LinkedList()
-    assert lst.insert(0, "First").data == "First"
-    assert lst.insert(1, "Second").data == "Second"
-    assert lst.insert(2, "Third").data == "Third"
-    assert lst.traverse(0).data == "First"
+def test_insert_out_of_bounds():
+    ll = LinkedList()
+    with pytest.raises(OutOfBounds):
+        ll.insert(1, 10)
 
 
-def test_sll_traverse_end():
-    lst = LinkedList()
-    assert lst.insert(0, "First").data == "First"
-    assert lst.insert(1, "Second").data == "Second"
-    assert lst.insert(2, "Third").data == "Third"
-    assert lst.traverse(2).data == "Third"
+def test_remove_only_node():
+    ll = LinkedList()
+    ll.insert(0, 10)
+    data = ll.remove(0)
+    assert data == 10
+    assert ll.length == 0
+    assert ll.head is None
+    assert ll.tail is None
 
 
-def test_sll_traverse_middle():
-    lst = LinkedList()
-    assert lst.insert(0, "First").data == "First"
-    assert lst.insert(1, "Second").data == "Second"
-    assert lst.insert(2, "Third").data == "Third"
-    assert lst.traverse(1).data == "Second"
+def test_remove_head():
+    ll = LinkedList()
+    ll.insert(0, 10)
+    ll.insert(1, 20)
+    data = ll.remove(0)
+    assert data == 10
+    assert ll.head.data == 20
+    assert ll.length == 1
 
 
-def test_sll_remove_emtpy():
-    lst = LinkedList()
-    assert lst.length == 0
-    with pytest.raises(Exception):
-        lst.remove(0)
+def test_remove_tail():
+    ll = LinkedList()
+    ll.insert(0, 10)
+    ll.insert(1, 20)
+    data = ll.remove(1)
+    assert data == 20
+    assert ll.tail.data == 10
+    assert ll.length == 1
 
 
-def test_sll_remove_start():
-    lst = LinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    lst.insert(2, "Third")
-    assert lst.length == 3
-    assert lst.remove(0) == "First"
-    assert lst.head.data == "Second"
-    assert lst.tail.data == "Third"
-    assert lst.length == 2
+def test_remove_middle():
+    ll = LinkedList()
+    ll.insert(0, 10)
+    ll.insert(1, 20)
+    ll.insert(2, 30)
+    data = ll.remove(1)
+    assert data == 20
+    assert ll.traverse(0).data == 10
+    assert ll.traverse(1).data == 30
+    assert ll.length == 2
 
 
-def test_sll_remove_end():
-    lst = LinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    lst.insert(2, "Third")
-    assert lst.length == 3
-    assert lst.remove(2) == "Third"
-    assert lst.head.data == "First"
-    assert lst.tail.data == "Second"
-    assert lst.length == 2
+def test_remove_from_empty_list():
+    ll = LinkedList()
+    with pytest.raises(EmptyList):
+        ll.remove(0)
 
 
-def test_sll_remove_middle():
-    lst = LinkedList()
-    lst.insert(0, "First")
-    lst.insert(1, "Second")
-    lst.insert(2, "Third")
-    assert lst.length == 3
-    assert lst.remove(1) == "Second"
-    assert lst.head.data == "First"
-    assert lst.tail.data == "Third"
-    assert lst.head.next == lst.tail
-    assert lst.length == 2
+def test_remove_out_of_bounds():
+    ll = LinkedList()
+    ll.insert(0, 10)
+    with pytest.raises(OutOfBounds):
+        ll.remove(2)
+
+
+def test_traverse_valid_positions():
+    ll = LinkedList()
+    ll.insert(0, 10)
+    ll.insert(1, 20)
+    ll.insert(2, 30)
+    assert ll.traverse(0).data == 10
+    assert ll.traverse(1).data == 20
+    assert ll.traverse(2).data == 30
+
+
+def test_traverse_empty_list():
+    ll = LinkedList()
+    with pytest.raises(EmptyList):
+        ll.traverse(0)
+
+
+def test_traverse_out_of_bounds():
+    ll = LinkedList()
+    ll.insert(0, 10)
+    with pytest.raises(OutOfBounds):
+        ll.traverse(2)
+
+
+def test_insert_with_inconsistent_state():
+    ll = LinkedList()
+    ll._tail = None  # Manually breaking the state
+    ll._length = 1
+    with pytest.raises(AssertionError):
+        ll.insert(1, 10)
+
+
+def test_remove_with_inconsistent_state():
+    ll = LinkedList()
+    ll.insert(0, 10)
+    ll._head = None  # Manually breaking the state
+    with pytest.raises(InconsistentState):
+        ll.remove(0)
